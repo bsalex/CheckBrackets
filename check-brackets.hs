@@ -28,15 +28,15 @@ module CheckBrackets where
 
     checkExpressionWithStack (expressionFirstSymbol:expression) "" = case (findPair pairs [expressionFirstSymbol]) of
         Nothing -> checkExpressionWithStack expression ""
-        Just pair | snd pair == [expressionFirstSymbol] -> False
-        Just pair | fst pair == [expressionFirstSymbol] -> checkExpressionWithStack expression [expressionFirstSymbol]
+        Just (_, [closing]) | closing == expressionFirstSymbol -> False
+        Just ([opening], _) | opening == expressionFirstSymbol -> checkExpressionWithStack expression [expressionFirstSymbol]
 
     checkExpressionWithStack (expressionFirstSymbol:expression) (stackFirstSymbol:stack) = case (findPair pairs [expressionFirstSymbol]) of
         Nothing -> checkExpressionWithStack expression (stackFirstSymbol:stack)
         Just pair | pair == ([stackFirstSymbol], [expressionFirstSymbol]) -> checkExpressionWithStack expression stack
-        Just pair | snd pair == [expressionFirstSymbol] -> False
-        Just pair | fst pair == [expressionFirstSymbol] -> checkExpressionWithStack expression (expressionFirstSymbol:stackFirstSymbol:stack)
+        Just (_, [closing]) | closing == expressionFirstSymbol -> False
+        Just ([opening], _) | opening == expressionFirstSymbol -> checkExpressionWithStack expression (expressionFirstSymbol:stackFirstSymbol:stack)
 
 
     findPair :: [(String, String)] -> String -> Maybe (String, String)
-    findPair pairs pair = find (\(open, close) -> open == pair || close == pair) pairs
+    findPair pairs part = find (\(opening, closing) -> opening == part || closing == part) pairs
